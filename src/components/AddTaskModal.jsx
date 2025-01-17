@@ -1,5 +1,5 @@
 // src/components/AddTaskModal.jsx
-import React, { useState } from "react";
+import React, { memo, useState } from "react";
 import { useAddTaskMutation } from "../services/taskApi";
 import { toast } from "react-toastify";
 
@@ -12,7 +12,7 @@ const AddTaskModal = ({ onClose }) => {
     e.preventDefault();
     try {
       await addTask({ name: taskName, status }).unwrap();
-      toast.success("Task added successfully");
+      // toast.success("Task added successfully");
       onClose();
     } catch (error) {
       toast.error("Failed to add task");
@@ -32,7 +32,7 @@ const AddTaskModal = ({ onClose }) => {
               type="text"
               value={taskName}
               onChange={(e) => setTaskName(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className="mt-1 ps-3 py-1 block w-full rounded-md outline-none border-b-2 border-gray-300 shadow-sm focus:border-blue-200 focus:ring-blue-100"
               required
             />
           </div>
@@ -44,7 +44,7 @@ const AddTaskModal = ({ onClose }) => {
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className="mt-1 ps-3 py-1 block w-full rounded-md outline-none border-b-2 border-gray-300 shadow-sm focus:border-blue-200 focus:ring-blue-200"
             >
               <option value="Pending">Pending</option>
               <option value="In Progress">In Progress</option>
@@ -74,4 +74,4 @@ const AddTaskModal = ({ onClose }) => {
   );
 };
 
-export default AddTaskModal;
+export default memo(AddTaskModal);

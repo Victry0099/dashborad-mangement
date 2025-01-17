@@ -20,6 +20,7 @@ createRoot(document.getElementById("root")).render(
         draggable
         pauseOnHover
         theme="light"
+        // theme="colored"
         // transition={"Bounce"}
       />
       <App />

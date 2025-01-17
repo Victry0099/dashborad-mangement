@@ -1,46 +1,51 @@
 // src/components/TaskRow.jsx
-import React, { useState } from "react";
+import React, { memo, useState } from "react";
 import {
   useUpdateTaskMutation,
   useDeleteTaskMutation,
 } from "../services/taskApi";
 import { toast } from "react-toastify";
+import { CustomToast } from "../common/CutomToast";
 
 const TaskRow = ({ task, isMobile }) => {
-  const [updateTask] = useUpdateTaskMutation();
-  const [deleteTask] = useDeleteTaskMutation();
-  const [isEditing, setIsEditing] = useState(false);
+  const [updateTask, { isLoading: isUpdating }] = useUpdateTaskMutation();
+  const [deleteTask, { isLoading: isDeleting }] = useDeleteTaskMutation();
 
   const handleStatusChange = async (newStatus) => {
     try {
       await updateTask({ id: task.id, status: newStatus }).unwrap();
-      toast.success("Task status updated successfully");
+      // toast.success("Task status updated successfully");
     } catch (error) {
-      toast.error("Failed to update task status");
+      toast.error(error.data?.message || "Failed to update task status");
     }
   };
-
-  const handleDelete = async () => {
-    if (window.confirm("Are you sure you want to delete this task?")) {
-      try {
-        await deleteTask(task.id).unwrap();
-        toast.success("Task deleted successfully");
-      } catch (error) {
-        toast.error("Failed to delete task");
-      }
-    }
+  const handleDelete = () => {
+    CustomToast.delete({
+      title: "Confirm Delete",
+      message: `Are you sure you want to delete task "${task.name}"?`,
+      async onConfirm() {
+        try {
+          await deleteTask(task.id).unwrap();
+          // CustomToast.success("Task deleted successfully");
+        } catch (error) {
+          CustomToast.error(error.data?.message || "Failed to delete task");
+        }
+      },
+      onCancel() {
+        CustomToast.info("Delete cancelled");
+      },
+    });
   };
-
   if (isMobile) {
     return (
       <div className="space-y-2">
-        <div className="flex justify-between items-center">
-          <span className="font-medium">{task.name}</span>
+        <div className="flex justify-between items-center w-[100%]">
+          <span className=" text-sm font-medium w-[61%] md:text-lg">
+            {task.name}
+          </span>
           <StatusBadge status={task.status} />
         </div>
-        <div className="text-sm text-gray-500">
-          Created: {new Date(task.created_at).toLocaleString()}
-        </div>
+        <div className="text-sm text-gray-500">Created: {task.created_at}</div>
         <div className="flex space-x-2">
           <select
             value={task.status}
@@ -74,7 +79,7 @@ const TaskRow = ({ task, isMobile }) => {
         <StatusBadge status={task.status} />
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-        {new Date(task.created_at).toLocaleString()}
+        {task.created_at}
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
         <div className="flex space-x-2">
@@ -115,4 +120,4 @@ const StatusBadge = ({ status }) => {
   );
 };
 
-export default TaskRow;
+export default memo(TaskRow);

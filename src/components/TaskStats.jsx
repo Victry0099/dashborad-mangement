@@ -1,5 +1,5 @@
 // src/components/TaskStats.jsx
-import React from "react";
+import React, { memo } from "react";
 
 const TaskStats = ({ tasks }) => {
   const stats = tasks.reduce((acc, task) => {
@@ -43,4 +43,4 @@ const StatCard = ({ title, count, color }) => {
   );
 };
 
-export default TaskStats;
+export default memo(TaskStats);

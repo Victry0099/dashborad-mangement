@@ -1,13 +1,13 @@
-// src/App.jsx
-import React from "react";
+import React, { Suspense } from "react";
 
-import TaskDashboard from "./components/TaskDashboard";
+const TaskDashboard = React.lazy(() => import("./components/TaskDashboard"));
+import TaskDashboardSkeleton from "./skeletons/TaskDashboardSkeleton";
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-100">
+    <Suspense fallback={<TaskDashboardSkeleton />}>
       <TaskDashboard />
-    </div>
+    </Suspense>
   );
 }
 

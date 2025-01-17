@@ -1,57 +1,46 @@
+// src/services/taskApi.js
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-// Use the environment variable or fallback to localhost
-const server = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 export const taskApi = createApi({
   reducerPath: "taskApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: server,
-    credentials: "include", // Add credentials
+    baseUrl: `${baseUrl}/api`,
+    credentials: "include",
     prepareHeaders: (headers) => {
       headers.set("Content-Type", "application/json");
-      // Add any additional headers if needed
       return headers;
     },
   }),
   tagTypes: ["Task"],
   endpoints: (builder) => ({
     getTasks: builder.query({
-      query: () => ({
-        url: "/tasks",
-        credentials: "include",
-      }),
+      query: () => "tasks",
+      // Adjust this based on your API response structure
+      transformResponse: (response) => response.data || [],
       providesTags: ["Task"],
     }),
     addTask: builder.mutation({
       query: (task) => ({
-        url: "/tasks",
+        url: "tasks",
         method: "POST",
         body: task,
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
       }),
       invalidatesTags: ["Task"],
     }),
     updateTask: builder.mutation({
       query: ({ id, ...patch }) => ({
-        url: `/tasks/${id}`, // Fixed template literal syntax
+        url: `tasks/${id}`,
         method: "PUT",
         body: patch,
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
       }),
       invalidatesTags: ["Task"],
     }),
     deleteTask: builder.mutation({
       query: (id) => ({
-        url: `/tasks/${id}`, // Fixed template literal syntax
+        url: `tasks/${id}`,
         method: "DELETE",
-        credentials: "include",
       }),
       invalidatesTags: ["Task"],
     }),
